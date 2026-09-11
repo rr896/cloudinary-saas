@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model video {
+  compressedSize String
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  description    String?
+  duration       Float
+  id             String   @id
+  publicId       String
+  originalSize   String
+  title          String
+  updatedAt      DateTime @db.Timestamptz(6)
+}
