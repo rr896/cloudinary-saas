@@ -3,10 +3,16 @@ import { NextResponse } from 'next/server';
 
 
 const isPublicRoute = createRouteMatcher([
-    "/sign-in",
-    "/sign-up",
+    "/sign-in(.*)",
+    "/sign-up(.*)",
+    "/signup(.*)",
     "/",
-    "/home"
+])
+
+const isAuthRoute = createRouteMatcher([
+    "/sign-in(.*)",
+    "/sign-up(.*)",
+    "/signup(.*)",
 ])
 
 const isPublicApiRoute = createRouteMatcher([
@@ -18,23 +24,22 @@ export default clerkMiddleware(async (auth, req) => {
     // Add your middleware checks
     const { userId } = await auth();
     const curretUrl = new URL(req.url);
-    const isAccessingDashboard = curretUrl.pathname === "/home"
     const isApiRequest = curretUrl.pathname.startsWith("/api")
 
-    //if user is logged in 
-    if(userId && isPublicRoute(req) && !isAccessingDashboard) {
-        return NextResponse.redirect(new URL("/home",req.url))
+    // If user is logged in and visits auth pages, redirect to dashboard
+    if (userId && isAuthRoute(req)) {
+        return NextResponse.redirect(new URL("/home", req.url))
     }
 
-    // if user is not logged in and trying to access a protected route 
-    if(!userId){
-        if(!isPublicRoute(req) && !isPublicApiRoute(req)){
-            return NextResponse.redirect(new URL("/sign-in",req.url))
+    // If user is not logged in and trying to access a protected route
+    if (!userId) {
+        if (!isPublicRoute(req) && !isPublicApiRoute(req)) {
+            return NextResponse.redirect(new URL("/sign-in", req.url))
         }
 
-        // if the request is for a protected API and the user is not logged in
-        if(isApiRequest && !isPublicApiRoute(req)){
-            return NextResponse.redirect(new URL("/sign-in",req.url))
+        // If the request is for a protected API and the user is not logged in
+        if (isApiRequest && !isPublicApiRoute(req)) {
+            return NextResponse.redirect(new URL("/sign-in", req.url))
         }
     }
     
