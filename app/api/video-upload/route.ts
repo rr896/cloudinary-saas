@@ -12,7 +12,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
     cloudinary.config({ 
         cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, 
         api_key: process.env.CLOUDINARY_API_KEY, 
-        api_secret: process.env.CLOUDINARY_API_SECRET // Click 'View API Keys' above to copy your API secret
+        api_secret: process.env.CLOUDINARY_API_SECRET 
     });
     
     interface CloudinaryUploadResult{
@@ -31,7 +31,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
             return NextResponse.json({error:"Unauthorized"}, {status:400})
         }
 
-        if(!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_SECRET) {
+        if(!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
             return NextResponse.json({error: "Cloudinary credentials not found"}, {status:500})
         }
 
@@ -64,6 +64,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
                             ]
                         },
                         (error,result)=>{
+                            // console.log(error)
                             if(error) reject(error);
                             else resolve(result as CloudinaryUploadResult);
                         }
